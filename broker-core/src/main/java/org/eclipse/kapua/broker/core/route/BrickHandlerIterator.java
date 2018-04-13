@@ -24,9 +24,12 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.ProcessorDefinition;
+import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.service.account.Account;
+import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountListResult;
+import org.eclipse.kapua.service.account.AccountQuery;
 import org.eclipse.kapua.service.account.AccountService;
 
 @XmlRootElement(name = "iterator")
@@ -42,6 +45,7 @@ public class BrickHandlerIterator implements BrickHandler {
         ACCOUNT
     }
 
+    private AccountFactory accountFactory = KapuaLocator.getInstance().getFactory(AccountFactory.class);
     private AccountService accountService = KapuaLocator.getInstance().getService(AccountService.class);
 
     private List<Brick> routeList;
@@ -80,10 +84,10 @@ public class BrickHandlerIterator implements BrickHandler {
     }
 
     @Override
-    public void appendBrickDefinition(ProcessorDefinition<?> processorDefinition, CamelContext camelContext, Map<String, Object> ac) throws UnsupportedOperationException {
+    public void appendBrickDefinition(ProcessorDefinition<?> processorDefinition, CamelContext camelContext, Map<String, Object> ac) throws KapuaException, UnsupportedOperationException {
         switch (type) {
         case ACCOUNT:
-            // todo get accounts
+            AccountQuery query = accountFactory.newQuery(null);
             AccountListResult accountList = accountService.query(query);
             for (Account account : accountList.getItems()) {
                 // override account property

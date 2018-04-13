@@ -30,6 +30,7 @@ import org.apache.camel.model.PipelineDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.kapua.KapuaException;
 
 @XmlRootElement(name = "basicRoute")
 @XmlAccessorType(XmlAccessType.PROPERTY)
@@ -133,7 +134,7 @@ public class BasicRoute implements Route {
     }
 
     @Override
-    public void appendBrickDefinition(ProcessorDefinition<?> processorDefinition, CamelContext camelContext, Map<String, Object> ac) throws UnsupportedOperationException {
+    public void appendBrickDefinition(ProcessorDefinition<?> processorDefinition, CamelContext camelContext, Map<String, Object> ac) throws UnsupportedOperationException, KapuaException {
         if (processorDefinition instanceof RouteDefinition) {
             appendBrickDefinitionInternal((RouteDefinition) processorDefinition, camelContext, ac);
         } else if (processorDefinition instanceof ChoiceDefinition) {
@@ -151,7 +152,7 @@ public class BasicRoute implements Route {
         }
     }
 
-    private void appendBrickDefinitionInternal(RouteDefinition routeDefinition, CamelContext camelContext, Map<String, Object> ac) {
+    private void appendBrickDefinitionInternal(RouteDefinition routeDefinition, CamelContext camelContext, Map<String, Object> ac) throws UnsupportedOperationException, KapuaException {
         routeDefinition.setId(id);
         routeDefinition.setAutoStartup(Boolean.toString(autoStartup));
         if (multicast) {
@@ -170,13 +171,13 @@ public class BasicRoute implements Route {
     }
 
 
-    private void appendBrickDefinitionInternal(PipelineDefinition pipelineDefinition, CamelContext camelContext, Map<String, Object> ac) {
+    private void appendBrickDefinitionInternal(PipelineDefinition pipelineDefinition, CamelContext camelContext, Map<String, Object> ac) throws UnsupportedOperationException, KapuaException {
         for (Brick route : routeList) {
             route.appendBrickDefinition(pipelineDefinition, camelContext, ac);
         }
     }
 
-    private void appendBrickDefinitionInternal(MulticastDefinition multicastDefinition, CamelContext camelContext, Map<String, Object> ac) {
+    private void appendBrickDefinitionInternal(MulticastDefinition multicastDefinition, CamelContext camelContext, Map<String, Object> ac) throws UnsupportedOperationException, KapuaException {
         for (Brick route : routeList) {
             PipelineDefinition pd = multicastDefinition.pipeline();
             route.appendBrickDefinition(pd, camelContext, ac);
@@ -184,7 +185,7 @@ public class BasicRoute implements Route {
         }
     }
 
-    private void appendBrickDefinitionInternal(ChoiceDefinition choiceDefinition, CamelContext camelContext, Map<String, Object> ac) {
+    private void appendBrickDefinitionInternal(ChoiceDefinition choiceDefinition, CamelContext camelContext, Map<String, Object> ac) throws UnsupportedOperationException, KapuaException {
         if (multicast) {
             MulticastDefinition md = choiceDefinition.multicast();
             appendBrickDefinitionInternal(md, camelContext, ac);

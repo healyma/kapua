@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.broker.core.router.PlaceholderReplacer;
 import org.eclipse.persistence.oxm.annotations.XmlPath;
 import org.slf4j.Logger;
@@ -105,7 +106,7 @@ public class ChoiceLeaf implements Brick {
     }
 
     @Override
-    public void appendBrickDefinition(ProcessorDefinition<?> processorDefinition, CamelContext camelContext, Map<String, Object> ac) throws UnsupportedOperationException {
+    public void appendBrickDefinition(ProcessorDefinition<?> processorDefinition, CamelContext camelContext, Map<String, Object> ac) throws UnsupportedOperationException, KapuaException {
         if (processorDefinition instanceof ChoiceDefinition) {
             ProcessorDefinition<ChoiceDefinition> whenChoiceDefinition = ((ChoiceDefinition) processorDefinition).when().simple(
                     PlaceholderReplacer.replacePlaceholder(condition, ac));

@@ -28,6 +28,7 @@ import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.PipelineDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.eclipse.kapua.KapuaException;
 import org.eclipse.persistence.oxm.annotations.XmlPath;
 
 @XmlRootElement(name = "choiceRoot")
@@ -91,7 +92,7 @@ public class ChoiceRoot implements Brick {
     }
 
     @Override
-    public void appendBrickDefinition(ProcessorDefinition<?> processorDefinition, CamelContext camelContext, Map<String, Object> ac) throws UnsupportedOperationException {
+    public void appendBrickDefinition(ProcessorDefinition<?> processorDefinition, CamelContext camelContext, Map<String, Object> ac) throws UnsupportedOperationException, KapuaException {
         ChoiceDefinition cd = null;
         if (processorDefinition instanceof RouteDefinition) {
             cd = ((RouteDefinition) processorDefinition).choice();
@@ -106,7 +107,7 @@ public class ChoiceRoot implements Brick {
         appendRouteDefinitionInternal(cd, camelContext, ac);
     }
 
-    private void appendRouteDefinitionInternal(ChoiceDefinition cd, CamelContext camelContext, Map<String, Object> ac) {
+    private void appendRouteDefinitionInternal(ChoiceDefinition cd, CamelContext camelContext, Map<String, Object> ac) throws UnsupportedOperationException, KapuaException {
         for (Brick choiceWhen : choiceList) {
             choiceWhen.appendBrickDefinition(cd, camelContext, ac);
         }
