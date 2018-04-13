@@ -13,6 +13,7 @@ package org.eclipse.kapua.broker.core.route;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -90,7 +91,7 @@ public class ChoiceRoot implements Brick {
     }
 
     @Override
-    public void appendBrickDefinition(ProcessorDefinition<?> processorDefinition, CamelContext camelContext) throws UnsupportedOperationException {
+    public void appendBrickDefinition(ProcessorDefinition<?> processorDefinition, CamelContext camelContext, Map<String, Object> ac) throws UnsupportedOperationException {
         ChoiceDefinition cd = null;
         if (processorDefinition instanceof RouteDefinition) {
             cd = ((RouteDefinition) processorDefinition).choice();
@@ -102,17 +103,17 @@ public class ChoiceRoot implements Brick {
         else {
             throw new UnsupportedOperationException(String.format("Unsupported ProcessDefinition [%s]... Only ChoiceDefinition, PipelineDefinition and RouteDefinition are allowed", this.getClass()));
         }
-        appendRouteDefinitionInternal(cd, camelContext);
+        appendRouteDefinitionInternal(cd, camelContext, ac);
     }
 
-    private void appendRouteDefinitionInternal(ChoiceDefinition cd, CamelContext camelContext) {
+    private void appendRouteDefinitionInternal(ChoiceDefinition cd, CamelContext camelContext, Map<String, Object> ac) {
         for (Brick choiceWhen : choiceList) {
-            choiceWhen.appendBrickDefinition(cd, camelContext);
+            choiceWhen.appendBrickDefinition(cd, camelContext, ac);
         }
         cd.endChoice();
         if (otherwise != null) {
             cd.otherwise();
-            otherwise.appendBrickDefinition(cd, camelContext);
+            otherwise.appendBrickDefinition(cd, camelContext, ac);
         }
         cd.end();
     }
